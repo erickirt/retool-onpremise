@@ -49,7 +49,7 @@ Configure
 
 1. Check the generated `.env` files to make sure the license key and randomized keys were set as expected during the installation.
 
-2. Review the blob storage settings in `docker.env`. The generated defaults use bundled MinIO through `RR_BLOB_STORAGE_PROVIDER=s3` and `RR_DEFAULT_S3_*` variables. For production, replace these with your external object store credentials. For AWS S3, remove `RR_DEFAULT_S3_ENDPOINT` and `AWS_ENDPOINT_URL`; for S3-compatible providers such as R2 or MinIO, set both endpoint variables to the provider endpoint. The older `RR_GIT_*`, `RR_SNAPSHOTS_*`, and `RETOOL_ORG_PACKAGES_*` variables are only needed for advanced per-use-case overrides.
+2. Review the blob storage settings in `docker.env`. The generated defaults use bundled MinIO through `RR_BLOB_STORAGE_PROVIDER=s3` and `RR_DEFAULT_S3_*` variables, which require Retool 3.391.0 or later. For production, replace these with your external object store credentials. For AWS S3, remove `RR_DEFAULT_S3_ENDPOINT` and `AWS_ENDPOINT_URL`; for S3-compatible providers such as R2 or MinIO, set both endpoint variables to the provider endpoint. The older `RR_GIT_*`, `RR_SNAPSHOTS_*`, and `RETOOL_ORG_PACKAGES_*` variables are only needed for older Retool versions or advanced per-use-case overrides.
 
 3. Save off the `ENCRYPTION_KEY` value, since this is needed to encrypt/decrypt values saved into the Postgres database the Retool instance runs on.
 

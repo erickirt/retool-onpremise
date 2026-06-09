@@ -157,6 +157,7 @@ AGENT_EXECUTOR_POSTGRES_URL=postgres://retool_internal_user:$postgres_password@p
 AGENT_EXECUTOR_POSTGRES_SCHEMA=agent_executor
 
 # Blob storage (bundled MinIO defaults)
+# Requires Retool 3.391.0+; older images need the legacy per-use-case blob storage vars.
 # For production, replace these with your external S3-compatible object store.
 # Leave RR_DEFAULT_S3_ENDPOINT and AWS_ENDPOINT_URL unset for AWS S3.
 # Set both to the same endpoint for R2, MinIO, or other custom endpoints.
