@@ -8,7 +8,7 @@ services:
       context: .
     env_file: docker.env
     environment:
-      - SERVICE_TYPE=MAIN_BACKEND,DB_CONNECTOR,DB_SSH_CONNECTOR
+      - SERVICE_TYPE=MAIN_BACKEND,DB_CONNECTOR,DB_SSH_CONNECTOR,RR_GIT_SERVER
     ports:
       - 3000:3000
     networks:
@@ -116,7 +116,7 @@ services:
 
     # js-executor reads its memory budget from the cgroup limit, so this
     # must be set explicitly. Matches the helm chart default (2048Mi).
-    mem_limit: 4g
+    mem_limit: 2g
 
     # Custom seccomp profile is required for nsjail's syscalls to pass Docker's
     # default seccomp filter. Applies under both options below.
@@ -151,7 +151,6 @@ services:
       - NODE_ENV=production
       - AGENT_EXECUTOR_ROLE=controller
       - ORCHESTRATOR=docker
-      - EXECUTOR_IMAGE=${EXECUTOR_IMAGE:-retool-onpremise-agent-sandbox-controller}
       - DOCKER_NETWORK=agent-sandbox
       - EXECUTOR_SERVICE_NAME=agent-sandbox
       - SANDBOX_BACKEND_URL=http://api:3000
@@ -225,6 +224,9 @@ services:
         aliases:
           - retool-blob-storage.minio
           - retool-rr-git.minio
+          - retool-rr-snapshots.minio
+      agent-sandbox:
+        aliases:
           - retool-rr-snapshots.minio
     volumes:
       - minio-data:/data
