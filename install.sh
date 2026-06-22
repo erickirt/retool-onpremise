@@ -115,6 +115,9 @@ random() { cat /dev/urandom | base64 | head -c "$1" | tr -d +/ ; }
 
 postgres_password=$(random 64)
 
+minio_root_user=retool
+minio_root_password=$(random 32)
+
 ae_private_pem=$(openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 2>/dev/null)
 ae_public_pem=$(echo "$ae_private_pem" | openssl ec -pubout 2>/dev/null)
 ae_private_key=$(echo "$ae_private_pem" | awk '{if(NR>1)printf "\\n";printf "%s",$0}')
@@ -161,11 +164,16 @@ AGENT_EXECUTOR_POSTGRES_SCHEMA=agent_executor
 # Set both to the same endpoint for R2, MinIO, or other custom endpoints.
 RR_BLOB_STORAGE_PROVIDER=s3
 RR_DEFAULT_S3_BUCKET=retool-blob-storage
-RR_DEFAULT_S3_ACCESS_KEY_ID=retool
-RR_DEFAULT_S3_SECRET_ACCESS_KEY=retoolminio
+RR_DEFAULT_S3_ACCESS_KEY_ID=$minio_root_user
+RR_DEFAULT_S3_SECRET_ACCESS_KEY=$minio_root_password
 RR_DEFAULT_S3_REGION=us-east-1
 RR_DEFAULT_S3_ENDPOINT=http://minio:9000
 AWS_ENDPOINT_URL=http://minio:9000
+
+# Bundled MinIO root credentials. The minio and minio-init services read these
+# from docker.env; they must match the RR_DEFAULT_S3_* access key/secret above.
+MINIO_ROOT_USER=$minio_root_user
+MINIO_ROOT_PASSWORD=$minio_root_password
 
 # Comment out below to use Retool-managed Temporal (Enterprise license)
 WORKFLOW_TEMPORAL_CLUSTER_FRONTEND_HOST=temporal
