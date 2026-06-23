@@ -17,8 +17,10 @@ services:
       - code-executor
       - js-executor
     depends_on:
-      - postgres
-      - minio
+      postgres:
+        condition: service_started
+      minio-init:
+        condition: service_completed_successfully
     restart: always
 
   jobs-runner:
@@ -44,7 +46,10 @@ services:
       - code-executor
       - js-executor
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+      minio-init:
+        condition: service_completed_successfully
     restart: always
 
   workflows-worker:
@@ -59,7 +64,10 @@ services:
       - code-executor
       - js-executor
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+      minio-init:
+        condition: service_completed_successfully
     restart: always
 
   agent-worker:
@@ -74,7 +82,10 @@ services:
       - code-executor
       - js-executor
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+      minio-init:
+        condition: service_completed_successfully
     restart: always
 
   agent-eval-worker:
@@ -89,7 +100,10 @@ services:
       - code-executor
       - js-executor
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+      minio-init:
+        condition: service_completed_successfully
     restart: always
 
   code-executor:
@@ -156,7 +170,6 @@ services:
       - SANDBOX_BACKEND_URL=http://api:3000
       - EXECUTOR_EXTRA_ENV=SANDBOX_NETWORK_ENABLED=false,SANDBOX_HTTP_PROXY=http://agent-sandbox-proxy:3019
       - EXECUTOR_SECCOMP_PROFILE_PATH=/seccomp/gvisor-seccomp.json
-      # Lower pool sizes for local development
       - PREWARM_POOL_SIZE=1
       - MAX_TOTAL_JOBS=10
       - MAX_CONCURRENT_CREATES=2
@@ -204,7 +217,10 @@ services:
       - js-executor
       - agent-sandbox
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+      minio-init:
+        condition: service_completed_successfully
     restart: always
 
   minio:
@@ -220,11 +236,9 @@ services:
       backend:
         aliases:
           - retool-blob-storage.minio
-          - retool-rr-git.minio
-          - retool-rr-snapshots.minio
       agent-sandbox:
         aliases:
-          - retool-rr-snapshots.minio
+          - retool-blob-storage.minio
     volumes:
       - minio-data:/data
     restart: always
@@ -241,9 +255,7 @@ services:
         sleep 2;
       done;
       mc mb --ignore-existing local/retool-blob-storage;
-      mc mb --ignore-existing local/retool-rr-git;
-      mc mb --ignore-existing local/retool-rr-snapshots;
-      echo 'Buckets created successfully';
+      echo 'Bucket created successfully';
       "
     networks:
       - backend
