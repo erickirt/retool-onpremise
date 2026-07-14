@@ -282,7 +282,7 @@ services:
 
   # Optional Nginx container for handling TLS for your domain (requires setting DOMAINS and STAGE)
   https-portal:
-    image: tryretool/https-portal:latest
+    image: steveltn/https-portal:1.25.5
     env_file: docker.env
     environment:
       # Change 'local' -> 'production' below once your domain is pointing to this server
